@@ -17,38 +17,47 @@ export const App = () => {
     const captureSummary = async () => {
         if (summaryRef.current) {
             try {
-                // Lấy kích thước thực tế của summary-div
+                // Đảm bảo phần tử hiển thị đầy đủ trong viewport
+                const originalStyle = {
+                    position: summaryRef.current.style.position,
+                    left: summaryRef.current.style.left,
+                    top: summaryRef.current.style.top,
+                    width: summaryRef.current.style.width,
+                    height: summaryRef.current.style.height,
+                };
+    
+                // Lấy kích thước thực tế của phần tử
                 const { width, height } = summaryRef.current.getBoundingClientRect();
-                const scale = 1.5;
     
                 // Clone phần tử để thay đổi style
                 const clonedElement = summaryRef.current.cloneNode(true) as HTMLElement;
                 const subtitle = clonedElement.querySelector('.summary-subtitle') as HTMLElement;
                 if (subtitle) {
                     subtitle.style.textDecoration = 'none';
-                    clonedElement.style.width = `${width}px`;
-                    clonedElement.style.height = `${height}px`;
                 }
     
-                // Ẩn bản sao trên trang
+                // Đặt kích thước cố định cho clone
+                clonedElement.style.width = `${width}px`;
+                clonedElement.style.height = `${height}px`;
                 clonedElement.style.position = 'absolute';
                 clonedElement.style.left = '-9999px';
                 document.body.appendChild(clonedElement);
     
-                // Chụp ảnh bản sao với kích thước điều chỉnh để chứa viền
+                // Chụp ảnh với html2canvas, thêm scale để tăng chất lượng
                 const canvas = await html2canvas(clonedElement, {
                     useCORS: true,
                     background: '#ffffff',
+                    logging: true, // Bật log để debug trên di động
                 });
     
                 // Xóa bản sao khỏi DOM
                 document.body.removeChild(clonedElement);
     
-                // Tạo canvas mới với kích thước lớn hơn để thêm margin
+                // Tạo canvas mới với margin
                 const margin = 20;
                 const newCanvas = document.createElement('canvas');
-                newCanvas.width = width * scale + margin * 2;
-                newCanvas.height = height * scale + margin * 2;
+                newCanvas.width = width * window.devicePixelRatio + margin * 2;
+                newCanvas.height = height * window.devicePixelRatio + margin * 2;
     
                 const ctx = newCanvas.getContext('2d');
                 if (ctx) {
@@ -57,12 +66,27 @@ export const App = () => {
                     ctx.drawImage(canvas, margin, margin);
                 }
     
-                // Tạo link tải xuống
+                // Tạo hình ảnh và xử lý tải xuống
                 const image = newCanvas.toDataURL('image/png');
-                const link = document.createElement('a');
-                link.href = image;
-                link.download = 'flight-summary.png';
-                link.click();
+    
+                // Kiểm tra nếu thiết bị di động
+                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                if (isMobile) {
+                    // Trên di động, mở hình ảnh trong tab mới để người dùng lưu thủ công
+                    const win = window.open();
+                    if (win) {
+                        win.document.write(`<img src="${image}" />`);
+                        win.document.title = 'Flight Summary - Tap to Save';
+                    } else {
+                        alert('Please allow pop-ups to view and save the image.');
+                    }
+                } else {
+                    // Trên desktop, sử dụng tải xuống bình thường
+                    const link = document.createElement('a');
+                    link.href = image;
+                    link.download = 'flight-summary.png';
+                    link.click();
+                }
             } catch (error) {
                 console.error('Error capturing screenshot:', error);
                 alert('Failed to capture screenshot. Please try again.');
