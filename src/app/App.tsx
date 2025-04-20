@@ -17,6 +17,9 @@ export const App = () => {
     const captureSummary = async () => {
         if (summaryRef.current) {
             try {
+                const subtitle = summaryRef.current.querySelector('.summary-subtitle') as HTMLElement;;
+                if (subtitle) subtitle.style.textDecoration = 'none';
+
                 const canvas = await html2canvas(summaryRef.current, {
                     useCORS: true,
                     background: '#ffffff',
@@ -44,6 +47,8 @@ export const App = () => {
                 link.href = image;
                 link.download = 'flight-summary.png';
                 link.click();
+
+                if (subtitle) subtitle.style.textDecoration = 'underline';
             } catch (error) {
                 console.error('Error capturing screenshot:', error);
                 alert('Failed to capture screenshot. Please try again.');
