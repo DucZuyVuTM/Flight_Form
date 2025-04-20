@@ -17,27 +17,45 @@ export const App = () => {
     const captureSummary = async () => {
         if (summaryRef.current) {
             try {
-                const subtitle = summaryRef.current.querySelector('.summary-subtitle') as HTMLElement;;
-                if (subtitle) subtitle.style.textDecoration = 'none';
-
-                const canvas = await html2canvas(summaryRef.current, {
+                // Lấy kích thước thực tế của summary-div
+                const { width, height } = summaryRef.current.getBoundingClientRect();
+                const scale = 1.5;
+    
+                // Clone phần tử để thay đổi style
+                const clonedElement = summaryRef.current.cloneNode(true) as HTMLElement;
+                const subtitle = clonedElement.querySelector('.summary-subtitle') as HTMLElement;
+                if (subtitle) {
+                    subtitle.style.textDecoration = 'none';
+                    clonedElement.style.width = `${width}px`;
+                    clonedElement.style.height = `${height}px`;
+                }
+    
+                // Ẩn bản sao trên trang
+                clonedElement.style.position = 'absolute';
+                clonedElement.style.left = '-9999px';
+                document.body.appendChild(clonedElement);
+    
+                // Chụp ảnh bản sao với kích thước điều chỉnh để chứa viền
+                const canvas = await html2canvas(clonedElement, {
                     useCORS: true,
                     background: '#ffffff',
+                    // width: width,
+                    // height: height,
                 });
     
-                // Tạo một canvas mới với kích thước lớn hơn
-                const margin = 20; // Khoảng cách margin muốn thêm (pixel)
+                // Xóa bản sao khỏi DOM
+                document.body.removeChild(clonedElement);
+    
+                // Tạo canvas mới với kích thước lớn hơn để thêm margin
+                const margin = 20;
                 const newCanvas = document.createElement('canvas');
-                newCanvas.width = canvas.width + margin * 2; // Thêm margin hai bên
-                newCanvas.height = canvas.height + margin * 2; // Thêm margin trên dưới
+                newCanvas.width = width * scale + margin * 2;
+                newCanvas.height = height * scale + margin * 2;
     
                 const ctx = newCanvas.getContext('2d');
                 if (ctx) {
-                    // Đặt nền trắng cho canvas mới
                     ctx.fillStyle = '#ffffff';
                     ctx.fillRect(0, 0, newCanvas.width, newCanvas.height);
-    
-                    // Vẽ canvas cũ vào giữa canvas mới
                     ctx.drawImage(canvas, margin, margin);
                 }
     
@@ -47,8 +65,6 @@ export const App = () => {
                 link.href = image;
                 link.download = 'flight-summary.png';
                 link.click();
-
-                if (subtitle) subtitle.style.textDecoration = 'underline';
             } catch (error) {
                 console.error('Error capturing screenshot:', error);
                 alert('Failed to capture screenshot. Please try again.');
