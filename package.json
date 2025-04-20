@@ -1,5 +1,5 @@
 {
-  "name": "project",
+  "name": "flight-form",
   "version": "1.0.0",
   "scripts": {
     "start": "react-scripts start",
@@ -11,6 +11,7 @@
     "@reduxjs/toolkit": "^2.7.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
+    "html2canvas": "^1.4.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-redux": "^9.2.0",
@@ -19,6 +20,7 @@
     "typescript": "^4.9.5"
   },
   "devDependencies": {
+    "@types/html2canvas": "^0.5.35",
     "@types/node": "^20.14.2"
   },
   "browserslist": {

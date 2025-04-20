@@ -17,27 +17,29 @@ export const Step1 = ({ onNext }: Step1Props) => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <h2>Step 1: Choose Locations</h2>
-            <div>
-                <label>Departure:</label>
-                <input
-                    type="text"
-                    value={departure}
-                    onChange={(e) => dispatch(updateDeparture(e.target.value))}
-                    required
-                />
-            </div>
-            <div>
-                <label>Destination:</label>
-                <input
-                    type="text"
-                    value={destination}
-                    onChange={(e) => dispatch(updateDestination(e.target.value))}
-                    required
-                />
-            </div>
-            <button type="submit">Next</button>
-        </form>
+        <div className="form-div">
+            <form onSubmit={handleSubmit}>
+                <h2 className="form-subtitle">Step 1: Choose Locations</h2>
+                <div className="input-div">
+                    <label>Departure:</label>
+                    <input
+                        type="text"
+                        value={departure}
+                        onChange={(e) => dispatch(updateDeparture(e.target.value))}
+                        required
+                    />
+                </div>
+                <div className="input-div">
+                    <label>Destination:</label>
+                    <input
+                        type="text"
+                        value={destination}
+                        onChange={(e) => dispatch(updateDestination(e.target.value))}
+                        required
+                    />
+                </div>
+                <button type="submit">Next</button>
+            </form>
+        </div>
     );
 };
