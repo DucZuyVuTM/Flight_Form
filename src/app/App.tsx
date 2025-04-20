@@ -76,7 +76,7 @@ export const App = () => {
                     const win = window.open();
                     if (win) {
                         win.document.write(`<img src="${image}" />`);
-                        win.document.title = 'Flight Summary - Tap to Save';
+                        win.document.title = 'Flight Summary - Long Press to Save Image';
                     } else {
                         alert('Please allow pop-ups to view and save the image.');
                     }
