@@ -83,3 +83,14 @@ button:hover {
 .summary-info {
     margin: 10px 0;
 }
+
+@media screen and (max-width: 456px) {
+    label {
+        display: block;
+        margin-right: 0px;
+    }
+
+    button:hover {
+        background-color: blue;
+    }
+}
