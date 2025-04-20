@@ -11,4 +11,4 @@ dist-ssr/
 *.tsc
 
 # Output page
-dir/
+build/
