@@ -39,8 +39,6 @@ export const App = () => {
                 const canvas = await html2canvas(clonedElement, {
                     useCORS: true,
                     background: '#ffffff',
-                    // width: width,
-                    // height: height,
                 });
     
                 // Xóa bản sao khỏi DOM
